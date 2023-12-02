@@ -2,10 +2,13 @@ package main
 
 import (
 	"bot-mother/internal"
+	"bot-mother/internal/app"
+	"bot-mother/internal/app/ukrzaliznytsia"
 	"github.com/joho/godotenv"
 	"log"
 	"os"
 	"strconv"
+	"time"
 )
 
 func parseEnv() *internal.Env {
@@ -22,8 +25,25 @@ func parseEnv() *internal.Env {
 	)
 }
 
-func registerApplications() internal.Applications {
-	applications := make(map[string]internal.Application)
+func registerApplications() app.Applications {
+	var applications app.Applications
+
+	applications = append(applications, ukrzaliznytsia.NewApplication(*func() *ukrzaliznytsia.Env {
+		stationFrom, _ := strconv.Atoi(os.Getenv("STATION_FROM"))
+		stationTo, _ := strconv.Atoi(os.Getenv("STATION_TO"))
+
+		dateFrom, _ := time.Parse("2006-01-02", os.Getenv("DATE_FROM"))
+		dateTo, _ := time.Parse("2006-01-02", os.Getenv("DATE_TO"))
+
+		return ukrzaliznytsia.NewEnv(
+			os.Getenv("API_URL"),
+			os.Getenv("API_TOKEN"),
+			stationFrom,
+			stationTo,
+			dateFrom,
+			dateTo,
+		)
+	}()))
 
 	return applications
 }
