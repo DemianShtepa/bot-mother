@@ -1,0 +1,9 @@
+version: '3'
+services:
+  app:
+    image: golang:1.20.5-bullseye
+    container_name: bot-mother
+    working_dir: /app/cmd
+    volumes:
+      - .:/app
+    command: go run .
